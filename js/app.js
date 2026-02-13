@@ -11,7 +11,11 @@ let appState = {
         completedModules: JSON.parse(localStorage.getItem('pythonCompleted')) || [],
         streak: parseInt(localStorage.getItem('pythonStreak')) || 0,
         lastActive: localStorage.getItem('pythonLastActive') || new Date().toDateString(),
-        achievements: JSON.parse(localStorage.getItem('pythonAchievements')) || []
+        achievements: JSON.parse(localStorage.getItem('pythonAchievements')) || [],
+        completedExercises: JSON.parse(localStorage.getItem('pythonExercises')) || [],
+        completedExercises: JSON.parse(localStorage.getItem('pythonExercises')) || [],
+        completedQuizzes: JSON.parse(localStorage.getItem('pythonQuizzes')) || [],
+        avatar: localStorage.getItem('pythonAvatar') || '🐍'
     },
     currentModuleId: parseInt(localStorage.getItem('currentModule')) || 1,
     theme: localStorage.getItem('pythonTheme') || 'light',
@@ -43,22 +47,33 @@ function renderModules() {
 
     container.innerHTML = courseModules.map(module => {
         const isCompleted = appState.currentUser.completedModules.includes(module.id);
+        const isLocked = module.id > 1 && !appState.currentUser.completedModules.includes(module.id - 1);
         const isActive = appState.currentModuleId === module.id;
 
+        let statusIcon = '';
+        if (isLocked) {
+            statusIcon = '<i class="fas fa-lock" style="color: #666;"></i>';
+        } else if (isCompleted) {
+            statusIcon = '<i class="fas fa-check-circle" style="color: #00b894;"></i>';
+        }
+
         return `
-            <div class="module-card ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}" 
-                 onclick="loadModule(${module.id})">
-                <div class="module-icon">${module.icon}</div>
+            <div class="module-card ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}" 
+                 onclick="${isLocked ? 'showLockedAlert()' : `loadModule(${module.id})`}"
+                 style="${isLocked ? 'opacity: 0.7; cursor: not-allowed;' : ''}">
+                <div class="module-icon">${isLocked ? '🔒' : module.icon}</div>
                 <div class="module-info">
                     <div class="module-title">${module.title}</div>
                     <div class="module-status">
-                        <i class="fas fa-clock"></i> ${module.duration}
-                        <span style="margin-left: 10px;">
-                            <i class="fas fa-star" style="color: #ffd700;"></i> +${module.xp} XP
-                        </span>
+                        ${isLocked ? '<span>Bloqueado</span>' : `
+                            <i class="fas fa-clock"></i> ${module.duration}
+                            <span style="margin-left: 10px;">
+                                <i class="fas fa-star" style="color: #ffd700;"></i> +${module.xp} XP
+                            </span>
+                        `}
                     </div>
                 </div>
-                ${isCompleted ? '<i class="fas fa-check-circle" style="color: #00b894;"></i>' : ''}
+                ${statusIcon}
             </div>
         `;
     }).join('');
@@ -66,6 +81,12 @@ function renderModules() {
 
 // ===== CARGAR MÓDULO =====
 function loadModule(moduleId) {
+    // Verificar si el módulo está bloqueado
+    if (moduleId > 1 && !appState.currentUser.completedModules.includes(moduleId - 1)) {
+        showLockedAlert();
+        return;
+    }
+
     appState.currentModuleId = moduleId;
     localStorage.setItem('currentModule', moduleId);
 
@@ -144,21 +165,28 @@ function loadModule(moduleId) {
                 
                 <p style="margin: 15px 0; font-size: 1.1em;">${exercise.description}</p>
                 
-                <div class="code-editor-container">
-                    <div class="editor-header">
-                        <span class="file-tab">
-                            <i class="fab fa-python"></i> ejercicio_${module.id}_${index + 1}.py
-                        </span>
-                        <span style="color: #ffd700;">
-                            <i class="fas fa-lightbulb"></i> Pista: ${exercise.hint}
-                        </span>
-                    </div>
-                    <textarea 
-                        id="code-${module.id}-${index}" 
-                        class="code-textarea" 
-                        placeholder="# Escribe tu código aquí..."
-                    ></textarea>
-                    <div style="padding: 15px; display: flex; gap: 15px;">
+                    <div class="code-editor-container">
+                        <div class="editor-header">
+                            <span class="file-tab">
+                                <i class="fab fa-python"></i> ejercicio_${module.id}_${index + 1}.py
+                            </span>
+                            <span style="color: #ffd700;">
+                                <i class="fas fa-lightbulb"></i> Pista: ${exercise.hint}
+                            </span>
+                        </div>
+                        <div class="editor-wrapper">
+                            <div class="code-backdrop" id="backdrop-${module.id}-${index}"></div>
+                            <textarea 
+                                id="code-${module.id}-${index}" 
+                                class="code-textarea" 
+                                placeholder="# Escribe tu código aquí..."
+                                spellcheck="false"
+                                oninput="handleInput(this.id)"
+                                onscroll="handleScroll(this.id)"
+                                onkeydown="handleKeyDown(event, this.id)"
+                            ></textarea>
+                        </div>
+                        <div style="padding: 15px; display: flex; gap: 15px;">
                         <button class="btn btn-primary" onclick="runExercise(${module.id}, ${index})">
                             <i class="fas fa-play"></i> Ejecutar
                         </button>
@@ -212,28 +240,27 @@ function runExercise(moduleId, exerciseIndex) {
 
     if (isCorrect) {
         // Ejercicio correcto
-        const reward = module.xp; // usar xp definido en el módulo
+        const reward = module.xp; // usar xp definido en el módulo (podría ajustarse para ser parcial)
         showResult(
             resultElement,
-            `¡Excelente! 🎉 Tu código es correcto. +${reward} XP`,
+            `¡Excelente! 🎉 Tu código es correcto.`,
             'success'
         );
 
-        // Recompensa solo si no estaba completado
-        if (!appState.currentUser.completedModules.includes(moduleId)) {
-            appState.currentUser.points += reward;
-            appState.currentUser.completedModules.push(moduleId);
-            saveProgress();
-            updateUI();
-            renderModules();
+        // Registrar ejercicio completado
+        const exerciseKey = `${moduleId}-${exerciseIndex}`;
+        if (!appState.currentUser.completedExercises.includes(exerciseKey)) {
+            appState.currentUser.completedExercises.push(exerciseKey);
+            appState.currentUser.points += 50; // Puntos por ejercicio
 
             // Sonido de éxito
             if (appState.soundEnabled) {
                 playSound('success');
             }
 
-            // Verificar logros
+            saveProgress();
             checkAchievements();
+            checkModuleCompletion(moduleId);
         }
     } else {
         showResult(
@@ -282,6 +309,17 @@ function showHint(moduleId, exerciseIndex) {
     });
 }
 
+// ===== MOSTRAR ALERTA DE BLOQUEO =====
+function showLockedAlert() {
+    Swal.fire({
+        title: '🔒 Módulo Bloqueado',
+        text: 'Debes completar el módulo anterior para desbloquear este.',
+        icon: 'warning',
+        confirmButtonColor: '#6c5ce7',
+        confirmButtonText: 'Entendido'
+    });
+}
+
 // ===== ACTUALIZAR UI =====
 function updateUI() {
     // Actualizar puntos
@@ -300,13 +338,30 @@ function updateUI() {
     const streakDisplay = document.getElementById('streakDisplay');
     if (streakDisplay) {
         streakDisplay.textContent = appState.currentUser.streak;
+        // Efecto de racha visual
+        if (appState.currentUser.streak > 0) {
+            streakDisplay.parentElement.classList.add('streak-active');
+        } else {
+            streakDisplay.parentElement.classList.remove('streak-active');
+        }
+    }
+
+    // Actualizar Avatar
+    const avatarBtn = document.getElementById('currentAvatarBtn');
+    if (avatarBtn) {
+        avatarBtn.textContent = appState.currentUser.avatar;
     }
 
     // Actualizar barra de progreso
     const progressFill = document.getElementById('mainProgressFill');
+    const progressAvatar = document.getElementById('progressAvatar');
     if (progressFill) {
         const progress = (appState.currentUser.completedModules.length / courseModules.length) * 100;
         progressFill.style.width = `${progress}%`;
+
+        if (progressAvatar) {
+            progressAvatar.textContent = appState.currentUser.avatar;
+        }
     }
 
     // Actualizar nivel
@@ -339,6 +394,9 @@ function saveProgress() {
     localStorage.setItem('pythonCompleted', JSON.stringify(appState.currentUser.completedModules));
     localStorage.setItem('pythonStreak', appState.currentUser.streak);
     localStorage.setItem('pythonAchievements', JSON.stringify(appState.currentUser.achievements));
+    localStorage.setItem('pythonExercises', JSON.stringify(appState.currentUser.completedExercises));
+    localStorage.setItem('pythonQuizzes', JSON.stringify(appState.currentUser.completedQuizzes));
+    localStorage.setItem('pythonAvatar', appState.currentUser.avatar);
     localStorage.setItem('pythonLastActive', new Date().toDateString());
 }
 
@@ -442,6 +500,8 @@ function resetProgress() {
         if (result.isConfirmed) {
             appState.currentUser.points = 0;
             appState.currentUser.completedModules = [];
+            appState.currentUser.completedExercises = [];
+            appState.currentUser.completedQuizzes = [];
             appState.currentUser.achievements = [];
             appState.currentUser.streak = 0;
             appState.currentModuleId = 1;
@@ -559,14 +619,14 @@ function renderQuiz(module) {
             icon = '🏆';
             if (appState.soundEnabled) playSound('achievement');
 
-            // Otorgar recompensas si es nuevo
-            if (!appState.currentUser.completedModules.includes(module.id)) {
-                appState.currentUser.points += module.xp;
-                appState.currentUser.completedModules.push(module.id);
-                saveProgress();
-                updateUI();
-                renderModules();
+            // Registrar quiz completado
+            if (!appState.currentUser.completedQuizzes.includes(module.id)) {
+                appState.currentUser.completedQuizzes.push(module.id);
+                appState.currentUser.points += 50; // Puntos por quiz
+
                 checkAchievements();
+                checkModuleCompletion(module.id);
+                saveProgress();
             }
         } else {
             message = `Has obtenido ${score}/${questions.length}. Necesitas 70% para aprobar.`;
@@ -597,10 +657,11 @@ function renderQuiz(module) {
 
 // ===== CONFIGURAR EVENTOS =====
 function setupEventListeners() {
-    // Tecla Enter para ejecutar código
     document.addEventListener('keydown', function (e) {
+        const activeElement = document.activeElement;
+
+        // Tecla Ctrl + Enter para ejecutar código
         if (e.ctrlKey && e.key === 'Enter') {
-            const activeElement = document.activeElement;
             if (activeElement.classList.contains('code-textarea')) {
                 // Ejecutar el ejercicio actual
                 const id = activeElement.id;
@@ -610,7 +671,196 @@ function setupEventListeners() {
                 }
             }
         }
+
+        // Tecla Tab para indentación (ahora manejado en handleKeyDown pero mantenemos preventDefault global si es necesario)
+        if (e.key === 'Tab') {
+            if (activeElement.classList.contains('code-textarea')) {
+                e.preventDefault();
+            }
+        }
     });
+}
+
+// ===== FUNCIONES DEL EDITOR DE CÓDIGO =====
+
+function handleInput(id) {
+    const textarea = document.getElementById(id);
+    const backdrop = document.getElementById(id.replace('code', 'backdrop'));
+    if (!textarea || !backdrop) return;
+
+    const text = textarea.value;
+    // Escapar HTML para seguridad y visualización correcta
+    const escapedText = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    // Aplicar resaltado
+    const highlightedCode = applyHighlights(escapedText);
+
+    // Agregar un carácter extra al final para scroll correcto
+    backdrop.innerHTML = highlightedCode + '<br>';
+}
+
+function handleScroll(id) {
+    const textarea = document.getElementById(id);
+    const backdrop = document.getElementById(id.replace('code', 'backdrop'));
+    if (textarea && backdrop) {
+        backdrop.scrollTop = textarea.scrollTop;
+        backdrop.scrollLeft = textarea.scrollLeft;
+    }
+}
+
+function handleKeyDown(e, id) {
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        const textarea = document.getElementById(id);
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+
+        // Insertar 4 espacios
+        textarea.value = textarea.value.substring(0, start) + "    " + textarea.value.substring(end);
+
+        // Mover cursor
+        textarea.selectionStart = textarea.selectionEnd = start + 4;
+
+        // Actualizar resaltado
+        handleInput(id);
+    }
+}
+
+function applyHighlights(text) {
+    // Estrategia: Reemplazar tokens por spans coloreados
+
+    // 1. Strings (comillas simples o dobles)
+    text = text.replace(/(['"])(?:(?=(\\?))\2.)*?\1/g, '<span class="hl-string">$&</span>');
+
+    // 2. Comentarios (desde # hasta fin de línea)
+    // Nota: Esto es simple y puede fallar si # está dentro de un string ya procesado.
+    // Para simplificar en este nivel educativo, asumimos que funciona bien para la mayoría de casos básicos.
+    text = text.replace(/#.*/g, '<span class="hl-comment">$&</span>');
+
+    // 3. Keywords
+    const keywords = ['def', 'class', 'if', 'else', 'elif', 'while', 'for', 'in', 'return', 'print', 'import', 'from', 'True', 'False', 'None', 'and', 'or', 'not', 'break', 'continue'];
+    const keywordRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+    text = text.replace(keywordRegex, '<span class="hl-keyword">$1</span>');
+
+    // 4. Números
+    text = text.replace(/\b\d+\b/g, '<span class="hl-number">$&</span>');
+
+    // 5. Funciones (ej. input(), range())
+    text = text.replace(/\b([a-zA-Z_]\w*)(?=\()/g, '<span class="hl-function">$1</span>');
+
+    return text;
+}
+
+
+// ===== SISTEMA DE AVATARES =====
+
+const avatars = ['🐍', '🐱', '🐶', '🦊', '🤖', '👽', '🦄', '🐯', '🐼', '🐨', '🦖', '🦉', '🦋', '🐞', '🐢', '🐙'];
+
+function openAvatarModal() {
+    const modal = document.getElementById('avatarModal');
+    const grid = document.getElementById('avatarGrid');
+
+    // Generar grid
+    grid.innerHTML = avatars.map(av => `
+        <div class="avatar-option ${appState.currentUser.avatar === av ? 'selected' : ''}" 
+             onclick="selectAvatar('${av}')">
+            ${av}
+        </div>
+    `).join('');
+
+    modal.style.display = 'flex';
+}
+
+function closeAvatarModal() {
+    document.getElementById('avatarModal').style.display = 'none';
+}
+
+function selectAvatar(avatar) {
+    // Quitar selección previa
+    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+
+    // Marcar nuevo (visualmente)
+    const options = document.querySelectorAll('.avatar-option');
+    for (let opt of options) {
+        if (opt.textContent.trim() === avatar) {
+            opt.classList.add('selected');
+            break;
+        }
+    }
+
+    // Guardar temporalmente (o permanentemente)
+    appState.currentUser.tempAvatar = avatar;
+}
+
+function saveAvatar() {
+    if (appState.currentUser.tempAvatar) {
+        appState.currentUser.avatar = appState.currentUser.tempAvatar;
+        delete appState.currentUser.tempAvatar;
+
+        saveProgress();
+        updateUI();
+
+        Swal.fire({
+            title: '¡Avatar Actualizado!',
+            text: `Ahora eres un ${appState.currentUser.avatar}`,
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+    closeAvatarModal();
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function (event) {
+    const modal = document.getElementById('avatarModal');
+    if (event.target == modal) {
+        closeAvatarModal();
+    }
+}
+
+// ===== VERIFICAR COMPLETADO DE MÓDULO =====
+function checkModuleCompletion(moduleId) {
+    const module = courseModules.find(m => m.id === moduleId);
+    if (!module) return;
+
+    // Verificar ejercicios
+    const exercisesCompleted = module.exercises.every((ex, index) => {
+        return appState.currentUser.completedExercises.includes(`${moduleId}-${index}`);
+    });
+
+    // Verificar quiz (si tiene)
+    let quizCompleted = true;
+    if (module.quiz && module.quiz.length > 0) {
+        quizCompleted = appState.currentUser.completedQuizzes.includes(moduleId);
+    }
+
+    if (exercisesCompleted && quizCompleted) {
+        // ¡Módulo Completado!
+        if (!appState.currentUser.completedModules.includes(moduleId)) {
+            appState.currentUser.completedModules.push(moduleId);
+
+            // Recompensa extra por completar módulo
+            appState.currentUser.points += module.xp;
+
+            saveProgress();
+            updateUI();
+            renderModules();
+            checkAchievements();
+
+            Swal.fire({
+                title: '🎉 ¡Módulo Completado!',
+                text: `Has completado "${module.title}" y desbloqueado el siguiente nivel.`,
+                icon: 'success',
+                confirmButtonText: '¡Genial!'
+            });
+
+            if (appState.soundEnabled) playSound('success');
+        }
+    }
 }
 
 // ===== REPRODUCIR SONIDO =====
@@ -653,6 +903,13 @@ window.showHint = showHint;
 window.resetProgress = resetProgress;
 window.toggleTheme = toggleTheme;
 window.toggleSound = toggleSound;
+window.handleInput = handleInput;
+window.handleScroll = handleScroll;
+window.handleKeyDown = handleKeyDown;
+window.openAvatarModal = openAvatarModal;
+window.closeAvatarModal = closeAvatarModal;
+window.selectAvatar = selectAvatar;
+window.saveAvatar = saveAvatar;
 
 // ===== TEMA Y SONIDO =====
 function initializeThemeAndSound() {

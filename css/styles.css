@@ -28,48 +28,58 @@
     --light: #636e72;
     --dark: #dfe6e9;
     --header-bg: linear-gradient(45deg, #2d3436, #000000);
-    
+
     /* Overrides for specific elements */
     .app-container {
         background: rgba(45, 52, 54, 0.95);
         color: var(--text-color);
     }
-    
-    .sidebar-header h3, .module-title, .lesson-title, .diploma-header h2 {
+
+    .sidebar-header h3,
+    .module-title,
+    .lesson-title,
+    .diploma-header h2 {
         color: var(--text-color);
     }
-    
-    .modules-sidebar, .learning-area, .module-card, .example-box {
+
+    .modules-sidebar,
+    .learning-area,
+    .module-card,
+    .example-box {
         background: #1e272e;
         color: var(--text-color);
     }
-    
+
     .module-card.active {
         background: linear-gradient(45deg, #2d3436, #636e72);
         border-color: var(--primary);
     }
-    
+
     .module-card.completed {
         background: linear-gradient(45deg, #1e272e, #00b89433);
     }
-    
+
     .tag {
         background: #636e72;
         color: white;
     }
-    
+
     .btn-secondary {
         background: #636e72;
         color: white;
     }
-    
+
     .diploma-border {
-        background: #f5f6fa; /* Diploma always light for print */
+        background: #f5f6fa;
+        /* Diploma always light for print */
         color: #2d3436;
     }
-    
+
     /* Ensure text inside diploma is dark */
-    .diploma-border h2, .diploma-border h3, .diploma-border p, .diploma-border span {
+    .diploma-border h2,
+    .diploma-border h3,
+    .diploma-border p,
+    .diploma-border span {
         color: #2d3436 !important;
     }
 }
@@ -118,7 +128,8 @@ body {
 }
 
 /* ===== EFECTOS DE ESTRELLAS ===== */
-.stars, .twinkling {
+.stars,
+.twinkling {
     position: fixed;
     top: 0;
     left: 0;
@@ -138,13 +149,23 @@ body {
 }
 
 @keyframes stars {
-    from { transform: translateY(0); }
-    to { transform: translateY(-2000px); }
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-2000px);
+    }
 }
 
 @keyframes twinkling {
-    from { opacity: 0.5; }
-    to { opacity: 1; }
+    from {
+        opacity: 0.5;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* ===== APP CONTAINER ===== */
@@ -153,7 +174,7 @@ body {
     margin: 20px auto;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     backdrop-filter: blur(10px);
     animation: slideIn 0.6s ease-out;
@@ -164,6 +185,7 @@ body {
         opacity: 0;
         transform: translateY(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -194,8 +216,15 @@ body {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .header-text h1 {
@@ -280,17 +309,25 @@ body {
 }
 
 .progress-fill::after {
-    content: '🐍';
+    /* content: '🐍';  <-- Eliminado, ahora es un elemento DOM */
+    content: '';
     position: absolute;
     right: -15px;
     top: -20px;
     font-size: 30px;
-    animation: snakeMove 0.5s ease-out;
+    /* animation: snakeMove 0.5s ease-out; <-- Movido al span */
 }
 
 @keyframes snakeMove {
-    from { transform: translateX(-50px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .progress-markers {
@@ -341,7 +378,7 @@ body {
     background: #f8faff;
     border-radius: 20px;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-header {
@@ -458,7 +495,7 @@ body {
     background: white;
     border-radius: 20px;
     padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .lesson-header {
@@ -645,8 +682,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===== FOOTER ===== */
@@ -706,7 +750,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -728,6 +772,7 @@ body {
         opacity: 0;
         transform: translateY(-50px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -774,8 +819,13 @@ body {
 }
 
 @keyframes pythonSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .diploma-header h2 {
@@ -828,13 +878,13 @@ body {
     .main-content {
         grid-template-columns: 1fr;
     }
-    
+
     .stats-container {
         margin-top: 20px;
         width: 100%;
         justify-content: space-around;
     }
-    
+
     .header-text h1 {
         font-size: 1.8em;
     }
@@ -845,17 +895,17 @@ body {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .logo-container {
         flex-direction: column;
     }
-    
+
     .footer-content {
         flex-direction: column;
         gap: 20px;
         text-align: center;
     }
-    
+
     .epic-progress {
         flex-direction: column;
     }
@@ -871,7 +921,8 @@ body {
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 28px; /* Aumentado para mejor visibilidad de emojis */
+    font-size: 28px;
+    /* Aumentado para mejor visibilidad de emojis */
 }
 
 /* Asegurar que los emojis se vean correctamente */
@@ -908,9 +959,20 @@ body {
 
 /* anillo brillante giratorio */
 @keyframes badgeGlow {
-    0% { box-shadow: 0 0 5px #ffd700; transform: rotate(0deg); }
-    50% { box-shadow: 0 0 20px #ffd700; transform: rotate(180deg); }
-    100% { box-shadow: 0 0 5px #ffd700; transform: rotate(360deg); }
+    0% {
+        box-shadow: 0 0 5px #ffd700;
+        transform: rotate(0deg);
+    }
+
+    50% {
+        box-shadow: 0 0 20px #ffd700;
+        transform: rotate(180deg);
+    }
+
+    100% {
+        box-shadow: 0 0 5px #ffd700;
+        transform: rotate(360deg);
+    }
 }
 
 .badge.locked {
@@ -919,9 +981,17 @@ body {
 }
 
 @keyframes badgePop {
-    0% { transform: scale(0); }
-    80% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(0);
+    }
+
+    80% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Estilo para los tags de dificultad */
@@ -943,7 +1013,8 @@ body {
 /* Mejorar visualización de los módulos */
 .module-info {
     flex: 1;
-    min-width: 0; /* Evita desbordamiento */
+    min-width: 0;
+    /* Evita desbordamiento */
 }
 
 .module-title {
@@ -984,7 +1055,7 @@ body {
     border: 2px solid #6c5ce7;
     border-radius: 50%;
     transform: translateY(6px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Corrección para el footer */
@@ -1011,7 +1082,7 @@ body {
     align-items: center;
     gap: 15px;
     font-size: 1.2em;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     padding: 10px 20px;
     border-radius: 50px;
 }
@@ -1032,7 +1103,7 @@ body {
     transition: all 0.3s;
     width: 45px;
     height: 45px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1050,7 +1121,7 @@ body {
     color: #ffd700;
     font-size: 1.1em;
     padding: 10px 20px;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 50px;
 }
 
@@ -1060,12 +1131,12 @@ body {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .teacher-info {
         width: 100%;
         justify-content: center;
     }
-    
+
     .footer-quote {
         width: 100%;
         text-align: center;
@@ -1089,9 +1160,17 @@ body {
 
 /* Animación para módulos completados */
 @keyframes completePulse {
-    0% { box-shadow: 0 0 0 0 rgba(0,184,148,0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(0,184,148,0); }
-    100% { box-shadow: 0 0 0 0 rgba(0,184,148,0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 184, 148, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 184, 148, 0);
+    }
 }
 
 .module-card.completed {
@@ -1115,4 +1194,166 @@ body {
 
 .modules-container::-webkit-scrollbar-thumb:hover {
     background: #6c5ce7;
+}
+
+/* ===== NUEVAS MEJORAS UI/UX ===== */
+
+/* 1. EDITOR DE CÓDIGO (Syntax Highlighting) */
+.editor-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background: #1e1e1e;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.code-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    pointer-events: none;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: transparent;
+    /* El texto base es transparente */
+    z-index: 1;
+    overflow: hidden;
+}
+
+.code-textarea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: transparent;
+    /* Texto transparente, solo se ve el caret */
+    caret-color: white;
+    z-index: 2;
+    padding: 20px;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    border: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.code-highlights {
+    color: #d4d4d4;
+    /* Color base */
+}
+
+.hl-keyword {
+    color: #c678dd;
+    font-weight: bold;
+}
+
+/* def, if, else... */
+.hl-string {
+    color: #98c379;
+}
+
+/* "texto" */
+.hl-number {
+    color: #d19a66;
+}
+
+/* 123 */
+.hl-comment {
+    color: #5c6370;
+    font-style: italic;
+}
+
+/* # comentario */
+.hl-function {
+    color: #61afef;
+}
+
+/* print, random */
+
+/* 2. SISTEMA DE AVATARES */
+.avatar-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    overflow: hidden;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    transition: transform 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.avatar-option {
+    font-size: 40px;
+    background: #f1f2f6;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 3px solid transparent;
+}
+
+.avatar-option:hover {
+    transform: scale(1.1);
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-option.selected {
+    background: #ffeaa7;
+    border-color: #fdcb6e;
+    transform: scale(1.1);
+}
+
+/* 3. EFECTO DE RACHA (FUEGO) */
+@keyframes burn {
+    0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px #e17055);
+    }
+
+    50% {
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 10px #d63031);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px #e17055);
+    }
+}
+
+.streak-active i {
+    color: #e17055 !important;
+    animation: burn 1s infinite alternate;
 }

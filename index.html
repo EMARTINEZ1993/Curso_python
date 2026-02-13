@@ -33,6 +33,9 @@
             <div class="stats-container">
                 <!-- Controles de Configuración -->
                 <div class="settings-controls">
+                    <div class="avatar-btn" id="currentAvatarBtn" onclick="openAvatarModal()" title="Cambiar avatar">
+                        🐍
+                    </div>
                     <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Cambiar tema">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -67,7 +70,10 @@
         <!-- Barra de progreso épica -->
         <div class="epic-progress">
             <div class="progress-track">
-                <div class="progress-fill" id="mainProgressFill"></div>
+                <div class="progress-fill" id="mainProgressFill">
+                    <span id="progressAvatar"
+                        style="position: absolute; right: -15px; top: -20px; font-size: 30px; transition: all 0.5s;">🐍</span>
+                </div>
                 <div class="progress-markers" id="progressMarkers"></div>
             </div>
             <div class="level-badge" id="levelBadge">
@@ -202,6 +208,20 @@
             <h2><i class="fas fa-life-ring"></i> Centro de Ayuda</h2>
             <p>¿Atascado? ¡Aquí tienes ayuda!</p>
             <!-- Contenido de ayuda dinámico -->
+        </div>
+    </div>
+
+    <!-- Modal de Selección de Avatar -->
+    <div id="avatarModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; text-align: center; padding: 30px;">
+            <button class="modal-close" onclick="closeAvatarModal()">&times;</button>
+            <h2 style="margin-bottom: 20px;">Elige tu Personaje</h2>
+            <div class="avatar-grid" id="avatarGrid">
+                <!-- Avatares generados por JS -->
+            </div>
+            <button class="btn btn-primary" onclick="saveAvatar()" style="margin-top: 20px;">
+                ¡Listo!
+            </button>
         </div>
     </div>
 
