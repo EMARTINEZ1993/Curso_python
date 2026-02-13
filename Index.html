@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Adventure - Curso para Jóvenes</title>
+
+    <!-- Fonts y CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Fira+Code&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <div class="app-container">
+        <!-- Header con progreso -->
+        <header class="main-header">
+            <div class="logo-container">
+                <div class="python-logo">
+                    <i class="fab fa-python"></i>
+                </div>
+                <div class="header-text">
+                    <h1>🐍 Python Adventure</h1>
+                    <p class="subtitle">¡Tu viaje por el mundo de la programación!</p>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <!-- Controles de Configuración -->
+                <div class="settings-controls">
+                    <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Cambiar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn-icon" onclick="toggleSound()" id="soundBtn" title="Sonido On/Off">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="stat-card">
+                    <i class="fas fa-star"></i>
+                    <span id="pointsDisplay">0</span>
+                    <small>Puntos</small>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-code"></i>
+                    <span id="completedModulesDisplay">0/12</span>
+                    <small>Módulos</small>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-fire"></i>
+                    <span id="streakDisplay">0</span>
+                    <small>Racha</small>
+                </div>
+                <div class="stat-card" style="cursor:pointer;" onclick="showDiploma()" title="Ver diploma">
+                    <i class="fas fa-certificate"></i>
+                    <span>🏅</span>
+                    <small>Diploma</small>
+                </div>
+            </div>
+        </header>
+
+        <!-- Barra de progreso épica -->
+        <div class="epic-progress">
+            <div class="progress-track">
+                <div class="progress-fill" id="mainProgressFill"></div>
+                <div class="progress-markers" id="progressMarkers"></div>
+            </div>
+            <div class="level-badge" id="levelBadge">
+                <span class="level-number">1</span>
+                <span class="level-text">Novato</span>
+            </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="main-content">
+            <!-- Sidebar de módulos -->
+            <aside class="modules-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-map-signs"></i> Tu Aventura</h3>
+                    <button class="btn-reset" onclick="resetProgress()" title="Reiniciar progreso">
+                        <i class="fas fa-redo-alt"></i>
+                    </button>
+                </div>
+
+                <div class="modules-container" id="modulesContainer">
+                    <!-- Los módulos se cargarán dinámicamente -->
+                </div>
+
+                <div class="achievement-preview">
+                    <h4><i class="fas fa-trophy"></i> Logros</h4>
+                    <div class="achievement-badges" id="achievementBadges">
+                        <!-- Badges generadas dinámicamente -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Área de aprendizaje -->
+            <main class="learning-area">
+                <div id="lessonContent" class="lesson-content">
+                    <!-- Contenido dinámico -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer con nombre de la profe -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="teacher-info">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Prof. Luz Eliana Martinez Ramos</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fas fa-globe"></i></a>
+                </div>
+                <div class="footer-quote">
+                    "Enseñar Python es regalar superpoderes"
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal de Diploma -->
+    <div id="diplomaModal" class="modal">
+        <div class="modal-content diploma">
+            <button class="modal-close" onclick="closeDiploma()">&times;</button>
+            <div class="diploma-border">
+                <div class="diploma-inner">
+                    <div class="diploma-header">
+                        <i class="fab fa-python"></i>
+                        <h2>Mención de Honor</h2>
+                    </div>
+
+                    <div class="diploma-body">
+                        <p class="diploma-certify">La profesora</p>
+                        <h3 class="teacher-name">Luz Eliana Martinez Ramos</h3>
+                        <p class="diploma-certify">certifica que</p>
+
+                        <div class="student-name-container">
+                            <input type="text" id="studentNameInput" placeholder="Tu nombre" class="student-name-input">
+                        </div>
+
+                        <p class="diploma-text">
+                            ha completado exitosamente el curso
+                        </p>
+
+                        <h2 class="course-name">Python Adventure</h2>
+
+                        <div class="diploma-details">
+                            <div class="detail">
+                                <i class="fas fa-calendar"></i>
+                                <span id="diplomaDate"></span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-code"></i>
+                                <span id="modulesCompleted"></span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-star"></i>
+                                <span id="totalPoints"></span>
+                            </div>
+                        </div>
+
+                        <div class="diploma-seal">
+                            <i class="fas fa-certificate"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-certificate"></i>
+                        </div>
+
+                        <div class="signature-area">
+                            <div class="signature">
+                                <div class="signature-line"></div>
+                                <p>Luz Eliana Martinez Ramos</p>
+                                <small>Instructora Python</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="diploma-actions">
+                <button class="btn btn-primary" onclick="generatePDF()">
+                    <i class="fas fa-download"></i> Descargar Diploma
+                </button>
+                <button class="btn btn-secondary" onclick="shareAchievement()">
+                    <i class="fas fa-share-alt"></i> Compartir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de ayuda -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHelp()">&times;</button>
+            <h2><i class="fas fa-life-ring"></i> Centro de Ayuda</h2>
+            <p>¿Atascado? ¡Aquí tienes ayuda!</p>
+            <!-- Contenido de ayuda dinámico -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/modules.js"></script>
+    <script src="js/diploma.js"></script>
+    <script src="js/app.js"></script>
+    <!-- Librerías para PDF y Confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- SweetAlert2 para notificaciones bonitas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>
