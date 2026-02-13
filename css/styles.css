@@ -1221,8 +1221,9 @@ body {
     line-height: 1.5;
     white-space: pre-wrap;
     word-wrap: break-word;
-    color: transparent;
-    /* El texto base es transparente */
+    color: #d4d4d4;
+    /* color base para texto no resaltado; los tokens siguen siendo coloreados
+       por las clases .hl-*, que se aplican mediante JavaScript */
     z-index: 1;
     overflow: hidden;
 }
@@ -1234,8 +1235,10 @@ body {
     width: 100%;
     height: 100%;
     background: transparent;
-    color: transparent;
-    /* Texto transparente, solo se ve el caret */
+    /* Mostrar el texto del textarea también como respaldo. La mayoría de caracteres
+       no están resaltados, de modo que el contenido base es visible incluso si el
+       resaltador falla o tarda en ejecutarse. */
+    color: #d4d4d4;
     caret-color: white;
     z-index: 2;
     padding: 20px;
