@@ -8,15 +8,16 @@ function showDiploma() {
     const modal = document.getElementById('diplomaModal');
     
     // Verificar si completó todos los módulos
-    if (appState.currentUser.completedModules.length < courseModules.length) {
-        Swal.fire({
-            title: '🚀 ¡Casi ahí!',
-            text: `Te faltan ${courseModules.length - appState.currentUser.completedModules.length} módulos para obtener tu diploma`,
-            icon: 'info',
-            confirmButtonColor: '#6c5ce7'
-        });
-        return;
-    }
+    // [MODO DEMO] Comentado temporalmente para ver el diseño
+    // if (appState.currentUser.completedModules.length < courseModules.length) {
+    //     Swal.fire({
+    //         title: '🚀 ¡Casi ahí!',
+    //         text: `Te faltan ${courseModules.length - appState.currentUser.completedModules.length} módulos para obtener tu diploma`,
+    //         icon: 'info',
+    //         confirmButtonColor: '#6c5ce7'
+    //     });
+    //     return;
+    // }
     
     // Configurar fecha
     document.getElementById('diplomaDate').innerHTML = new Date().toLocaleDateString('es-ES', {
@@ -50,6 +51,17 @@ function closeDiploma() {
 
 // Generar PDF del diploma
 async function generatePDF() {
+    // Verificar que se completaron todos los módulos
+    if (appState.currentUser.completedModules.length < courseModules.length) {
+        Swal.fire({
+            title: '🚫 Diploma no disponible',
+            text: `Completa todos los módulos primero. Te faltan ${courseModules.length - appState.currentUser.completedModules.length}.`,
+            icon: 'error',
+            confirmButtonColor: '#d33'
+        });
+        return;
+    }
+    
     const studentName = document.getElementById('studentNameInput').value;
     
     if (!studentName) {

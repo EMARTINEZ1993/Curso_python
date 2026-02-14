@@ -253,6 +253,10 @@ function runExercise(moduleId, exerciseIndex) {
             appState.currentUser.completedExercises.push(exerciseKey);
             appState.currentUser.points += 50; // Puntos por ejercicio
 
+            // RACHA: Incrementar
+            appState.currentUser.streak += 1;
+            showStreakNotification();
+
             // Sonido de éxito
             if (appState.soundEnabled) {
                 playSound('success');
@@ -268,6 +272,22 @@ function runExercise(moduleId, exerciseIndex) {
             '❌ Casi lo tienes. ¡Sigue intentando!',
             'error'
         );
+
+        // RACHA: Perder
+        if (appState.currentUser.streak > 0) {
+            appState.currentUser.streak = 0;
+            Swal.fire({
+                title: '😢 Racha perdida',
+                text: 'Vuelve a intentar. ¡Tú puedes!',
+                icon: 'warning',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+            saveProgress();
+            updateUI();
+        }
 
         if (appState.soundEnabled) {
             playSound('error');
@@ -402,30 +422,18 @@ function saveProgress() {
 
 // ===== VERIFICAR RACHA =====
 function checkStreak() {
-    const lastActive = new Date(localStorage.getItem('pythonLastActive'));
-    const today = new Date();
-
-    if (lastActive.toDateString() !== today.toDateString()) {
-        const diffDays = Math.floor((today - lastActive) / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 1) {
-            // Día consecutivo
-            appState.currentUser.streak += 1;
-            showStreakNotification();
-        } else if (diffDays > 1) {
-            // Perdió la racha
-            appState.currentUser.streak = 1;
-        }
-
+    // La racha ahora se maneja por ejercicios, no por días
+    // Este función solo inicializa si es la primera vez
+    if (appState.currentUser.streak === undefined) {
+        appState.currentUser.streak = 0;
         saveProgress();
-        updateUI();
     }
 }
 
 // ===== MOSTRAR NOTIFICACIÓN DE RACHA =====
 function showStreakNotification() {
     Swal.fire({
-        title: `🔥 ¡Racha de ${appState.currentUser.streak} días!`,
+        title: `🔥 ¡Racha de ${appState.currentUser.streak} ejercicios!`,
         text: 'Sigue así, no pierdas tu racha',
         icon: 'success',
         timer: 3000,

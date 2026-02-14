@@ -515,26 +515,25 @@ const courseModules = [
         exercises: [
             {
                 id: 1,
-                title: "Adivina el número",
-                description: "Crea un juego donde el programa elige un número del 1 al 5 y tú lo adivinas. ¡Debes dar pistas!",
-                hint: "Importa random, genera el número secreto y usa un bucle while para pedir intentos.",
-                solution: "import random\nsecreto = random.randint(1,5)\nwhile True:\n    n = int(input('Número: '))\n    if n == secreto:\n        print('¡Ganaste!')\n        break\n    else:\n        print('¡No era ese!')",
+                title: "Juego con límite de intentos",
+                description: "Crea un juego del 1 al 20 con MÁXIMO 5 intentos. Si falla, muestra el número secreto.",
+                hint: "Usa while intentos < 5 para limitar. Tras 5 intentos, termina y revela la respuesta.",
+                solution: "import random\\nsecreto = random.randint(1,20)\\nintentos = 0\\nwhile intentos < 5:\\n    n = int(input('Número: '))\\n    intentos += 1\\n    if n == secreto:\\n        print('¡Ganaste!')\\n        break\\n    elif n < secreto:\\n        print('Más alto')\\n    else:\\n        print('Más bajo')\\nif intentos == 5:\\n    print('Game Over! Número:', secreto)",
                 test: (code) => {
-                    return code.includes('random') &&
-                        code.includes('while') &&
-                        code.includes('break');
+                    return code.includes('randint(1,20)') &&
+                        code.includes('< 5');
                 }
             },
             {
                 id: 2,
-                title: "Reto: Puntajes",
-                description: "Mejora el juego: cuenta los intentos y muestra un mensaje según cuántos intentos tomó",
-                hint: "Inicializa un contador en 0 y súmale 1 en cada intento. Al final verifica su valor.",
-                solution: "import random\nsecreto = random.randint(1,5)\nintentos = 0\nwhile True:\n    n = int(input('Número: '))\n    intentos += 1\n    if n == secreto:\n        print(f'¡Ganaste en {intentos} intentos!')\n        break",
+                title: "Reto: Sistema de dificultad",
+                description: "Mejora: pregunta la dificultad (Fácil=1-10, Normal=1-50, Difícil=1-100) y ajusta el rango.",
+                hint: "Usa input para pedir dificultad. Con if-elif cambia el máximo según la opción.",
+                solution: "import random\\ndif = input('Dificultad (Fácil/Normal/Difícil): ').lower()\\nif dif == 'facil':\\n    maximo = 10\\nelif dif == 'normal':\\n    maximo = 50\\nelse:\\n    maximo = 100\\nprint(f'Rango: 1 a {maximo}')\\nsecreto = random.randint(1,maximo)\\nintentos = 0\\nwhile intentos < 7:\\n    n = int(input('Tu número: '))\\n    intentos += 1\\n    if n == secreto:\\n        print(f'¡Victoria en {intentos} intentos!')\\n        break",
                 test: (code) => {
-                    return code.includes('intentos') &&
-                        code.includes('+= 1') &&
-                        code.includes('f');
+                    return code.includes('elif') &&
+                        code.includes('randint') &&
+                        code.includes('dif');
                 }
             }
         ],
