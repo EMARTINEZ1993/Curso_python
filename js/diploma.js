@@ -7,17 +7,16 @@
 function showDiploma() {
     const modal = document.getElementById('diplomaModal');
     
-    // Verificar si completó todos los módulos
-    // [MODO DEMO] Comentado temporalmente para ver el diseño
-    // if (appState.currentUser.completedModules.length < courseModules.length) {
-    //     Swal.fire({
-    //         title: '🚀 ¡Casi ahí!',
-    //         text: `Te faltan ${courseModules.length - appState.currentUser.completedModules.length} módulos para obtener tu diploma`,
-    //         icon: 'info',
-    //         confirmButtonColor: '#6c5ce7'
-    //     });
-    //     return;
-    // }
+    // Verificar si completó todos los módulos antes de mostrar el modal
+    if (appState.currentUser.completedModules.length < courseModules.length) {
+        Swal.fire({
+            title: '🚀 ¡Casi ahí!',
+            text: `Te faltan ${courseModules.length - appState.currentUser.completedModules.length} módulos para obtener tu diploma`,
+            icon: 'info',
+            confirmButtonColor: '#6c5ce7'
+        });
+        return;
+    }
     
     // Configurar fecha
     document.getElementById('diplomaDate').innerHTML = new Date().toLocaleDateString('es-ES', {
